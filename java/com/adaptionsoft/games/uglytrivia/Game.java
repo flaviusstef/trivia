@@ -18,8 +18,10 @@ public class Game {
     
     int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
+	private View view;
     
-    public Game(){
+    public Game(View v){
+    	this.view = v;
     	generateQuestions();
     }
 
@@ -38,11 +40,9 @@ public class Game {
 
 	public void add(String playerName) {
 	    players.add(playerName);
-	    
-	    System.out.println(playerName + " was added");
-	    System.out.println("They are player number " + players.size());
+	    view.newPlayer(playerName, howManyPlayers());
 	}
-	
+
 	public int howManyPlayers() {
 		return players.size();
 	}
@@ -50,25 +50,23 @@ public class Game {
 	public void nextRound() {
 		Random rand = new Random();
 		int roll = rand.nextInt(5) + 1;
-		System.out.println(players.get(currentPlayer) + " is the current player");
-		System.out.println("They have rolled a " + roll);
+		view.playerRolled(players.get(currentPlayer), roll);
 		
 		if (inPenaltyBox[currentPlayer]) {
 			if (roll % 2 != 0) {
 				isGettingOutOfPenaltyBox = true;
-				System.out.println(players.get(currentPlayer) + " is getting out of the penalty box");
+				view.gettingOutOfPenaltyBox(players.get(currentPlayer));
 				
-				moveToNextPlace(roll);
-				askQuestion();
 			} else {
-				System.out.println(players.get(currentPlayer) + " is not getting out of the penalty box");
 				isGettingOutOfPenaltyBox = false;
-				}
+				view.notGettingOutOfPenaltyBox(players.get(currentPlayer));
+				return;
+			}
 			
-		} else {
-			moveToNextPlace(roll);
-			askQuestion();
 		}
+		
+		moveToNextLocation(roll);
+		askQuestion();
 		
 		if (rand.nextInt(9) == 7) {
 			wrongAnswer();
@@ -77,12 +75,11 @@ public class Game {
 		}
 	}
 
-	private void moveToNextPlace(int roll) {
+	private void moveToNextLocation(int roll) {
 		places[currentPlayer] = places[currentPlayer] + roll;
 		if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
 		
-		String message = "%s's new location is %d";
-		System.out.println(String.format(message, players.get(currentPlayer), places[currentPlayer]));
+		view.moveToLocation(players.get(currentPlayer), places[currentPlayer]);
 	}
 
 	@SuppressWarnings("serial")
@@ -99,27 +96,26 @@ public class Game {
 		String currentCategory = categories[places[currentPlayer] %4 ];
 		
 		String question = questionSet.removeFirst();
-		System.out.println("The category is " + currentCategory);
-		System.out.println(question);
+		view.askQuestion(currentCategory, question);
 	}
 	
 	public void correctAnswer() {
-		if (inPenaltyBox[currentPlayer] && !isGettingOutOfPenaltyBox) {
+		if (staysInPenaltyBox()) {
 			selectNextPlayer();
 			return;
 		}
 		
-		playerGaveCorrectAnswer();
+		playerWinsAPoint();
+		view.correctAnswer(players.get(currentPlayer), playerPoints());
+		
 		if (playerWon()) {
 			return;
 		}
 		selectNextPlayer();
 	}
 
-	private void playerGaveCorrectAnswer() {
-		playerWinsAPoint();
-		System.out.println("Answer was correct!!!!");
-		System.out.println(String.format("%s now has %d Gold Coins.", players.get(currentPlayer), playerPoints()));
+	private boolean staysInPenaltyBox() {
+		return inPenaltyBox[currentPlayer] && !isGettingOutOfPenaltyBox;
 	}
 
 	private void playerWinsAPoint() {
@@ -131,10 +127,8 @@ public class Game {
 	}
 	
 	public void wrongAnswer(){
-		System.out.println("Question was incorrectly answered");
-		System.out.println(players.get(currentPlayer)+ " was sent to the penalty box");
 		putCurrentPlayerInPenaltyBox();
-		
+		view.sentToPenaltyBox(players.get(currentPlayer));
 		selectNextPlayer();
 	}
 
