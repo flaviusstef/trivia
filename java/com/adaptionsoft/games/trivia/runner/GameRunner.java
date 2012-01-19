@@ -11,10 +11,11 @@ public class GameRunner {
 
 	public static void main(String[] args) {
 		Game aGame = new Game();
+		String[] players = {"Chet", "Pat", "Sue"};
 		
-		aGame.add("Chet");
-		aGame.add("Pat");
-		aGame.add("Sue");
+		for (String player : players) {
+			aGame.add(player);
+		}
 		
 		Random rand = new Random();
 	
