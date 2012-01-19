@@ -78,9 +78,8 @@ public class Game {
 		places[currentPlayer] = places[currentPlayer] + roll;
 		if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
 		
-		System.out.println(players.get(currentPlayer) 
-				+ "'s new location is " 
-				+ places[currentPlayer]);
+		String message = "%s's new location is %d";
+		System.out.println(String.format(message, players.get(currentPlayer), places[currentPlayer]));
 	}
 
 	@SuppressWarnings("serial")
@@ -99,16 +98,13 @@ public class Game {
 	
 	
 	private String currentCategory() {
-		if (places[currentPlayer] == 0) return "Pop";
-		if (places[currentPlayer] == 4) return "Pop";
-		if (places[currentPlayer] == 8) return "Pop";
-		if (places[currentPlayer] == 1) return "Science";
-		if (places[currentPlayer] == 5) return "Science";
-		if (places[currentPlayer] == 9) return "Science";
-		if (places[currentPlayer] == 2) return "Sports";
-		if (places[currentPlayer] == 6) return "Sports";
-		if (places[currentPlayer] == 10) return "Sports";
-		return "Rock";
+		String [] categories = {
+				"Pop", "Science", "Sports", "Rock",
+				"Pop", "Science", "Sports", "Rock",
+				"Pop", "Science", "Sports", "Rock"
+		};
+		
+		return categories[places[currentPlayer] %4 ];
 	}
 
 	public boolean wasCorrectlyAnswered() {
@@ -125,12 +121,13 @@ public class Game {
 	}
 
 	private void playerGaveCorrectAnswer() {
+		playerWinsAPoint();
 		System.out.println("Answer was correct!!!!");
+		System.out.println(String.format("%s now has %d Gold Coins.", players.get(currentPlayer), purses[currentPlayer]));
+	}
+
+	private void playerWinsAPoint() {
 		purses[currentPlayer]++;
-		System.out.println(players.get(currentPlayer) 
-				+ " now has "
-				+ purses[currentPlayer]
-				+ " Gold Coins.");
 	}
 	
 	public boolean wrongAnswer(){
