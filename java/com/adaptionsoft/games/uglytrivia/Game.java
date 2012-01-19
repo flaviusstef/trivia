@@ -3,6 +3,7 @@ package com.adaptionsoft.games.uglytrivia;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
     ArrayList<String> players = new ArrayList<String>();
@@ -46,7 +47,9 @@ public class Game {
 		return players.size();
 	}
 
-	public void roll(int roll) {
+	public void nextRound() {
+		Random rand = new Random();
+		int roll = rand.nextInt(5) + 1;
 		System.out.println(players.get(currentPlayer) + " is the current player");
 		System.out.println("They have rolled a " + roll);
 		
@@ -67,6 +70,11 @@ public class Game {
 			askQuestion();
 		}
 		
+		if (rand.nextInt(9) == 7) {
+			wrongAnswer();
+		} else {
+			correctAnswer();
+		}
 	}
 
 	private void moveToNextPlace(int roll) {
@@ -95,7 +103,7 @@ public class Game {
 		System.out.println(question);
 	}
 	
-	public void wasCorrectlyAnswered() {
+	public void correctAnswer() {
 		if (inPenaltyBox[currentPlayer] && !isGettingOutOfPenaltyBox) {
 			selectNextPlayer();
 			return;
