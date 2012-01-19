@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Game {
-    ArrayList players = new ArrayList();
+    ArrayList<String> players = new ArrayList<String>();
     int[] places = new int[6];
     int[] purses  = new int[6];
     boolean[] inPenaltyBox  = new boolean[6];
     
-    LinkedList popQuestions = new LinkedList();
-    LinkedList scienceQuestions = new LinkedList();
-    LinkedList sportsQuestions = new LinkedList();
-    LinkedList rockQuestions = new LinkedList();
+    LinkedList<String> popQuestions = new LinkedList<String>();
+    LinkedList<String> scienceQuestions = new LinkedList<String>();
+    LinkedList<String> sportsQuestions = new LinkedList<String>();
+    LinkedList<String> rockQuestions = new LinkedList<String>();
     
     int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
@@ -22,21 +22,15 @@ public class Game {
 			popQuestions.addLast("Pop Question " + i);
 			scienceQuestions.addLast(("Science Question " + i));
 			sportsQuestions.addLast(("Sports Question " + i));
-			rockQuestions.addLast(createRockQuestion(i));
+			rockQuestions.addLast("Rock Question " + i);
     	}
     }
 
-	public String createRockQuestion(int index){
-		return "Rock Question " + index;
-	}
-	
 	public boolean isPlayable() {
 		return (howManyPlayers() >= 2);
 	}
 
 	public boolean add(String playerName) {
-		
-		
 	    players.add(playerName);
 	    places[howManyPlayers()] = 0;
 	    purses[howManyPlayers()] = 0;
