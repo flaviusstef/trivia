@@ -1,7 +1,9 @@
 package com.adaptionsoft.games.uglytrivia;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Game {
     ArrayList<String> players = new ArrayList<String>();
@@ -17,14 +19,18 @@ public class Game {
     int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
     
-    public  Game(){
-    	for (int i = 0; i < 50; i++) {
+    public Game(){
+    	generateQuestions();
+    }
+
+	private void generateQuestions() {
+		for (int i = 0; i < 50; i++) {
 			popQuestions.addLast("Pop Question " + i);
 			scienceQuestions.addLast(("Science Question " + i));
 			sportsQuestions.addLast(("Sports Question " + i));
 			rockQuestions.addLast("Rock Question " + i);
     	}
-    }
+	}
 
 	public boolean isPlayable() {
 		return (howManyPlayers() >= 2);
@@ -81,15 +87,17 @@ public class Game {
 		
 	}
 
+	@SuppressWarnings("serial")
 	private void askQuestion() {
-		if (currentCategory() == "Pop")
-			System.out.println(popQuestions.removeFirst());
-		if (currentCategory() == "Science")
-			System.out.println(scienceQuestions.removeFirst());
-		if (currentCategory() == "Sports")
-			System.out.println(sportsQuestions.removeFirst());
-		if (currentCategory() == "Rock")
-			System.out.println(rockQuestions.removeFirst());		
+		Map<String, LinkedList<String>> questionSets = new HashMap<String, LinkedList<String>>() {{
+				put("Pop", popQuestions);
+				put("Science", scienceQuestions);
+				put("Sports", sportsQuestions);
+				put("Rock", rockQuestions);
+			}};
+			
+		String question = questionSets.get(currentCategory()).removeFirst();
+		System.out.println(question);
 	}
 	
 	
