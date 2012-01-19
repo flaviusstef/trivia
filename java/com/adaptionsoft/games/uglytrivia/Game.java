@@ -1,15 +1,14 @@
 package com.adaptionsoft.games.uglytrivia;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 
 public class Game {
     ArrayList<String> players = new ArrayList<String>();
-    int[] places = new int[6];
-    int[] purses  = new int[6];
-    boolean[] inPenaltyBox  = new boolean[6];
+    int[] places = {0,0,0,0,0,0};
+    int[] purses  = {0,0,0,0,0,0};
+    boolean[] inPenaltyBox  = {false, false, false, false, false, false};
     
     LinkedList<String> popQuestions = new LinkedList<String>();
     LinkedList<String> scienceQuestions = new LinkedList<String>();
@@ -36,15 +35,11 @@ public class Game {
 		return (howManyPlayers() >= 2);
 	}
 
-	public boolean add(String playerName) {
+	public void add(String playerName) {
 	    players.add(playerName);
-	    places[howManyPlayers()] = 0;
-	    purses[howManyPlayers()] = 0;
-	    inPenaltyBox[howManyPlayers()] = false;
 	    
 	    System.out.println(playerName + " was added");
 	    System.out.println("They are player number " + players.size());
-		return true;
 	}
 	
 	public int howManyPlayers() {
@@ -84,59 +79,55 @@ public class Game {
 
 	@SuppressWarnings("serial")
 	private void askQuestion() {
-		Map<String, LinkedList<String>> questionSets = new HashMap<String, LinkedList<String>>() {{
-				put("Pop", popQuestions);
-				put("Science", scienceQuestions);
-				put("Sports", sportsQuestions);
-				put("Rock", rockQuestions);
-			}};
-			
-		String question = questionSets.get(currentCategory()).removeFirst();
-		System.out.println("The category is " + currentCategory());
+		List<LinkedList<String>> questions = new ArrayList<LinkedList<String>>() {{
+			add(popQuestions);
+			add(scienceQuestions);
+			add(sportsQuestions);
+			add(rockQuestions);
+		}};
+		String [] categories = { "Pop", "Science", "Sports", "Rock" };
+		
+		LinkedList<String> questionSet = questions.get(places[currentPlayer] %4 );
+		String currentCategory = categories[places[currentPlayer] %4 ];
+		
+		String question = questionSet.removeFirst();
+		System.out.println("The category is " + currentCategory);
 		System.out.println(question);
 	}
 	
-	
-	private String currentCategory() {
-		String [] categories = {
-				"Pop", "Science", "Sports", "Rock",
-				"Pop", "Science", "Sports", "Rock",
-				"Pop", "Science", "Sports", "Rock"
-		};
-		
-		return categories[places[currentPlayer] %4 ];
-	}
-
-	public boolean wasCorrectlyAnswered() {
+	public void wasCorrectlyAnswered() {
 		if (inPenaltyBox[currentPlayer] && !isGettingOutOfPenaltyBox) {
 			selectNextPlayer();
-			return true;
+			return;
 		}
 		
 		playerGaveCorrectAnswer();
-		boolean winner = didPlayerWin();
+		if (playerWon()) {
+			return;
+		}
 		selectNextPlayer();
-		
-		return winner;
 	}
 
 	private void playerGaveCorrectAnswer() {
 		playerWinsAPoint();
 		System.out.println("Answer was correct!!!!");
-		System.out.println(String.format("%s now has %d Gold Coins.", players.get(currentPlayer), purses[currentPlayer]));
+		System.out.println(String.format("%s now has %d Gold Coins.", players.get(currentPlayer), playerPoints()));
 	}
 
 	private void playerWinsAPoint() {
 		purses[currentPlayer]++;
 	}
 	
-	public boolean wrongAnswer(){
+	private int playerPoints() {
+		return purses[currentPlayer];
+	}
+	
+	public void wrongAnswer(){
 		System.out.println("Question was incorrectly answered");
 		System.out.println(players.get(currentPlayer)+ " was sent to the penalty box");
 		putCurrentPlayerInPenaltyBox();
 		
 		selectNextPlayer();
-		return true;
 	}
 
 	private void putCurrentPlayerInPenaltyBox() {
@@ -148,7 +139,11 @@ public class Game {
 		if (currentPlayer == players.size()) currentPlayer = 0;
 	}
 
-	private boolean didPlayerWin() {
-		return !(purses[currentPlayer] == 6);
+	private boolean playerWon() {
+		return (playerPoints() == 6);
+	}
+	
+	public boolean isGameOver() {
+		return playerWon();
 	}
 }
