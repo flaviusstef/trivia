@@ -1,22 +1,21 @@
 package com.adaptionsoft.games.trivia;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 public class Game {
     private static final int LOCATION_COUNT = 12;
-	ArrayList<String> playerNames = new ArrayList<String>();
+	private static final int COINS_REQUIRED_TO_WIN = 6;
+	List<Player> players = new ArrayList<Player>();
     int[] places = {0,0,0,0,0,0};
     
     int currentPlayer = 0;
 	private View view;
-	private ScoreKeeper scoreKeeper;
 	private Scholar scholar;
 	private Guard guard;
     
-    public Game(View v, ScoreKeeper sk, Scholar sch, Guard g){
+    public Game(View v, Scholar sch, Guard g){
     	this.view = v;
-    	this.scoreKeeper = sk;
     	this.scholar = sch;
     	this.guard = g;
     }
@@ -26,17 +25,17 @@ public class Game {
 	}
 
 	public boolean isFinished() {
-		return scoreKeeper.hasWinner();
+		return players.get(currentPlayer).coins() == COINS_REQUIRED_TO_WIN;
 	}
 	
-	public void addPlayer(String playerName) {
-	    playerNames.add(playerName);
-	    view.playerAdded(playerName, howManyPlayers());
+	public void addPlayer(Player player) {
+		players.add(player);
+	    view.playerAdded(player, howManyPlayers());
 	}
 
 	public void nextRound() {
-		view.playerName = playerNames.get(currentPlayer);
-		int roll = rollDice();
+		view.player = players.get(currentPlayer);
+		int roll = players.get(currentPlayer).rollDice();
 		view.playerRolled(roll);
 		guard.playerRolled(roll);
 		if (!guard.canPlay(currentPlayer)) {
@@ -57,8 +56,8 @@ public class Game {
 
 	private void verifyAnswer() {
 		if (scholar.isAnswerCorrect()) {
-			scoreKeeper.addCoinFor(currentPlayer);
-			view.correctAnswer(scoreKeeper.coinsOf(currentPlayer));
+			players.get(currentPlayer).addCoin();
+			view.correctAnswer(players.get(currentPlayer).coins());
 		} else {
 			guard.sendToPenaltyBox(currentPlayer);
 			view.incorrectAnswer();
@@ -72,15 +71,10 @@ public class Game {
 
 	private void selectNextPlayer() {
 		currentPlayer++;
-		if (currentPlayer == playerNames.size()) currentPlayer = 0;
+		if (currentPlayer == howManyPlayers()) currentPlayer = 0;
 	}
 
 	private int howManyPlayers() {
-		return playerNames.size();
-	}
-	
-	private int rollDice() {
-		Random rand = new Random();
-		return rand.nextInt(5) + 1;
+		return players.size();
 	}
 }
