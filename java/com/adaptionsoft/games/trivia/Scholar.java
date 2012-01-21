@@ -47,8 +47,8 @@ public class Scholar {
 		return lastCategory;
 	}
 	
-	public boolean correctAnswer() {
+	public boolean isAnswerCorrect() {
 		Random rand = new Random();
-		return rand.nextInt(9) == 7;
+		return (rand.nextInt(9) != 7);
 	}
 }

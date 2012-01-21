@@ -4,13 +4,13 @@ public class View {
 	
 	public String playerName;
 
-	public void newPlayer(String playerName, int totalPlayers) {
+	public void playerAdded(String playerName, int totalPlayers) {
 		System.out.println(playerName + " was added");
 	    System.out.println("They are player number " + totalPlayers);
 	}
 
 	public void gettingOutOfPenaltyBox() {
-		System.out.println(playerName + " is getting out of the penalty box");
+		System.out.printf("%s is getting out of the penalty box\n", playerName);
 	}
 
 	public void notGettingOutOfPenaltyBox() {
@@ -22,9 +22,9 @@ public class View {
 		System.out.println("They have rolled a " + roll);
 	}
 
-	void moveToLocation(int location) {
-		String message = "%s's new location is %d";
-		System.out.println(String.format(message, playerName, location));
+	void movedToLocation(int location) {
+		String message = "%s's new location is %d\n";
+		System.out.printf(message, playerName, location);
 	}
 
 	public void incorrectAnswer() {
