@@ -6,18 +6,16 @@ import java.util.List;
 public class Game {
     private static final int LOCATION_COUNT = 12;
 	private static final int COINS_REQUIRED_TO_WIN = 6;
+	
 	List<Player> players = new ArrayList<Player>();
-    int[] places = {0,0,0,0,0,0};
-    
-    int currentPlayer = 0;
+	Player currentPlayer = null;
+	
 	private View view;
 	private Scholar scholar;
-	private Guard guard;
     
-    public Game(View v, Scholar sch, Guard g){
+    public Game(View v, Scholar sch){
     	this.view = v;
     	this.scholar = sch;
-    	this.guard = g;
     }
 
 	public boolean isPlayable() {
@@ -25,56 +23,65 @@ public class Game {
 	}
 
 	public boolean isFinished() {
-		return players.get(currentPlayer).coins() == COINS_REQUIRED_TO_WIN;
+		return currentPlayer.coins() == COINS_REQUIRED_TO_WIN;
 	}
 	
 	public void addPlayer(Player player) {
 		players.add(player);
+		// player to start is first player added
+		if (currentPlayer == null) currentPlayer = player;
 	    view.playerAdded(player, howManyPlayers());
 	}
 
 	public void nextRound() {
-		view.player = players.get(currentPlayer);
-		int roll = players.get(currentPlayer).rollDice();
+		view.player = currentPlayer;
+		int roll = currentPlayer.rollDice();
 		view.playerRolled(roll);
-		guard.playerRolled(roll);
-		if (!guard.canPlay(currentPlayer)) {
-			selectNextPlayer();
-			return;
+		if (currentPlayer.inPenaltyBox()) {
+			if (rollIsLiberating(roll)) {
+				currentPlayer.releaseFromPenaltyBox();
+				view.gettingOutOfPenaltyBox();
+			} else {
+				view.notGettingOutOfPenaltyBox();
+				selectNextPlayer();
+				return;
+			}
 		}
-		moveToNextLocation(roll);
-		askQuestion();
-		if (!isFinished()) selectNextPlayer();
-	}
-
-	private void askQuestion() {
-		String question = scholar.generateQuestion(places[currentPlayer]);
-		String category = scholar.lastCategory();
-		view.askQuestion(category, question);
+		
+		movePlayerToNextLocation(roll);
+		scholar.askQuestion(currentPlayer);
 		verifyAnswer();
+		if (!isFinished()) selectNextPlayer();
 	}
 
 	private void verifyAnswer() {
 		if (scholar.isAnswerCorrect()) {
-			players.get(currentPlayer).addCoin();
-			view.correctAnswer(players.get(currentPlayer).coins());
+			currentPlayer.receiveCoin();
+			view.correctAnswer(currentPlayer.coins());
 		} else {
-			guard.sendToPenaltyBox(currentPlayer);
+			currentPlayer.sendToPenaltyBox();
 			view.incorrectAnswer();
 		}
 	}
 
-	private void moveToNextLocation(int roll) {
-		places[currentPlayer] = (places[currentPlayer] + roll) % LOCATION_COUNT;
-		view.movedToLocation(places[currentPlayer]);
+	private void movePlayerToNextLocation(int roll) {
+		int newLocation = (currentPlayer.location() + roll) % LOCATION_COUNT;
+		currentPlayer.moveTo(newLocation);
+		view.movedToLocation(newLocation);
 	}
 
 	private void selectNextPlayer() {
-		currentPlayer++;
-		if (currentPlayer == howManyPlayers()) currentPlayer = 0;
+		int nextPlayer = players.indexOf(currentPlayer) + 1;
+		if (nextPlayer == howManyPlayers())
+			nextPlayer = 0;
+		currentPlayer = players.get(nextPlayer);
 	}
 
 	private int howManyPlayers() {
 		return players.size();
+	}
+	
+	private boolean rollIsLiberating(int roll) {
+		return roll %2 != 0;
 	}
 }

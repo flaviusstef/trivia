@@ -12,9 +12,11 @@ public class Scholar {
     LinkedList<String> sportsQuestions = new LinkedList<String>();
     LinkedList<String> rockQuestions = new LinkedList<String>();
     
-    String lastCategory = "";
+    String category = "";
+	private View view;
 
-    public Scholar() {
+    public Scholar(View view) {
+    	this.view = view;
     	generateQuestions();
     }
     
@@ -28,7 +30,7 @@ public class Scholar {
 	}
 	
 	@SuppressWarnings("serial")
-	public String generateQuestion(int position) {
+	public void askQuestion(Player player) {
 		List<LinkedList<String>> questions = new ArrayList<LinkedList<String>>() {{
 			add(popQuestions);
 			add(scienceQuestions);
@@ -37,14 +39,10 @@ public class Scholar {
 		}};
 		String [] categories = { "Pop", "Science", "Sports", "Rock" };
 		
-		LinkedList<String> questionSet = questions.get(position %4 );
-		lastCategory = categories[position %4 ];
+		LinkedList<String> questionSet = questions.get(player.location() %4 );
+		category = categories[player.location() %4 ];
 		
-		return questionSet.removeFirst();
-	}
-	
-	public String lastCategory() {
-		return lastCategory;
+		view.askQuestion(category, questionSet.removeFirst());
 	}
 	
 	public boolean isAnswerCorrect() {
