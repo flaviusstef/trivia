@@ -1,12 +1,12 @@
 package com.adaptionsoft.games.trivia;
 
 public class View {
-	
+
 	public Player player;
 
 	public void playerAdded(Player player, int totalPlayers) {
 		System.out.println(player + " was added");
-	    System.out.println("They are player number " + totalPlayers);
+		System.out.println("They are player number " + totalPlayers);
 	}
 
 	public void gettingOutOfPenaltyBox() {
@@ -39,6 +39,7 @@ public class View {
 
 	public void correctAnswer(int totalPoints) {
 		System.out.println("Answer was correct!!!!");
-		System.out.println(String.format("%s now has %d Gold Coins.", player, totalPoints));
+		System.out.println(String.format("%s now has %d Gold Coins.", player,
+				totalPoints));
 	}
 }

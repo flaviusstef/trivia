@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private static final int LOCATION_COUNT = 12;
+	private static final int LOCATION_COUNT = 12;
 	private static final int COINS_REQUIRED_TO_WIN = 6;
-	
+
 	List<Player> players = new ArrayList<Player>();
 	Player currentPlayer = null;
-	
+
 	private View view;
 	private QuizMaker quizMaker;
-    
-    public Game(View view, QuizMaker quizMaker){
-    	this.view = view;
-    	this.quizMaker = quizMaker;
-    }
+
+	public Game(View view, QuizMaker quizMaker) {
+		this.view = view;
+		this.quizMaker = quizMaker;
+	}
 
 	public boolean isPlayable() {
 		return (howManyPlayers() >= 2);
@@ -25,12 +25,13 @@ public class Game {
 	public boolean isFinished() {
 		return currentPlayer.coins() == COINS_REQUIRED_TO_WIN;
 	}
-	
+
 	public void addPlayer(Player player) {
 		players.add(player);
 		// player to start is first player added
-		if (currentPlayer == null) currentPlayer = player;
-	    view.playerAdded(player, howManyPlayers());
+		if (currentPlayer == null)
+			currentPlayer = player;
+		view.playerAdded(player, howManyPlayers());
 	}
 
 	public void nextRound() {
@@ -47,11 +48,12 @@ public class Game {
 				return;
 			}
 		}
-		
+
 		movePlayerToNextLocation(roll);
 		quizMaker.askQuestion(currentPlayer);
 		verifyAnswer();
-		if (!isFinished()) selectNextPlayer();
+		if (!isFinished())
+			selectNextPlayer();
 	}
 
 	private void verifyAnswer() {
@@ -80,7 +82,7 @@ public class Game {
 	private int howManyPlayers() {
 		return players.size();
 	}
-	
+
 	private boolean rollIsLiberating(int roll) {
 		return roll % 2 != 0;
 	}
