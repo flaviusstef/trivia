@@ -2,7 +2,7 @@ package com.adaptionsoft.games.trivia.runner;
 
 import com.adaptionsoft.games.trivia.Game;
 import com.adaptionsoft.games.trivia.Player;
-import com.adaptionsoft.games.trivia.Scholar;
+import com.adaptionsoft.games.trivia.QuizMaker;
 import com.adaptionsoft.games.trivia.View;
 
 
@@ -10,8 +10,8 @@ public class GameRunner {
 
 	public static void main(String[] args) {
 		View v = new View();
-		Scholar sch = new Scholar(v);
-		Game game = new Game(v, sch);
+		QuizMaker quizMaker = new QuizMaker(v);
+		Game game = new Game(v, quizMaker);
 		
 		String[] playerNames = {"Chet", "Pat", "Sue"};
 		for (String name : playerNames)

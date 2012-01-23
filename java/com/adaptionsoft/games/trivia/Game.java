@@ -11,11 +11,11 @@ public class Game {
 	Player currentPlayer = null;
 	
 	private View view;
-	private Scholar scholar;
+	private QuizMaker quizMaker;
     
-    public Game(View v, Scholar sch){
-    	this.view = v;
-    	this.scholar = sch;
+    public Game(View view, QuizMaker quizMaker){
+    	this.view = view;
+    	this.quizMaker = quizMaker;
     }
 
 	public boolean isPlayable() {
@@ -49,13 +49,13 @@ public class Game {
 		}
 		
 		movePlayerToNextLocation(roll);
-		scholar.askQuestion(currentPlayer);
+		quizMaker.askQuestion(currentPlayer);
 		verifyAnswer();
 		if (!isFinished()) selectNextPlayer();
 	}
 
 	private void verifyAnswer() {
-		if (scholar.isAnswerCorrect()) {
+		if (quizMaker.isAnswerCorrect()) {
 			currentPlayer.receiveCoin();
 			view.correctAnswer(currentPlayer.coins());
 		} else {
@@ -82,6 +82,6 @@ public class Game {
 	}
 	
 	private boolean rollIsLiberating(int roll) {
-		return roll %2 != 0;
+		return roll % 2 != 0;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Scholar {
+public class QuizMaker {
 	
     LinkedList<String> popQuestions = new LinkedList<String>();
     LinkedList<String> scienceQuestions = new LinkedList<String>();
@@ -15,7 +15,7 @@ public class Scholar {
     String category = "";
 	private View view;
 
-    public Scholar(View view) {
+    public QuizMaker(View view) {
     	this.view = view;
     	generateQuestions();
     }
